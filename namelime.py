@@ -1,12 +1,16 @@
-from openpyxl import Workbook
+from flask import Flask, request, jsonify
+from openpyxl import Workbook, load_workbook
 import os
 
-# 엑셀 파일 생성 함수
-def create_excel_file(file_name):
-    # 엑셀 파일이 이미 존재하면 생성을 건너뜁니다.
+app = Flask(__name__)
+
+# 엑셀 파일 생성 API
+@app.route('/create_excel', methods=['POST'])
+def create_excel_file():
+    file_name = request.json.get('file_name', 'user_data.xlsx')
+
     if os.path.exists(file_name):
-        print(f"{file_name} 파일이 이미 존재합니다.")
-        return
+        return jsonify({"message": f"{file_name} 파일이 이미 존재합니다."}), 400
 
     # 새로운 엑셀 워크북 생성
     wb = Workbook()
@@ -17,41 +21,39 @@ def create_excel_file(file_name):
 
     # 파일 저장
     wb.save(file_name)
-    print(f"{file_name} 파일을 생성했습니다.")
+    return jsonify({"message": f"{file_name} 파일을 생성했습니다."}), 201
 
-# 사용자 정보를 엑셀에 추가하는 함수
-def add_user_to_excel(file_name, nickname, user_id, password, high_score):
+# 사용자 정보 추가 API
+@app.route('/add_user', methods=['POST'])
+def add_user_to_excel():
+    data = request.json
+    file_name = data.get('file_name', 'user_data.xlsx')
+    nickname = data.get('nickname')
+    user_id = data.get('user_id')
+    password = data.get('password')
+    high_score = data.get('high_score')
+
     if not os.path.exists(file_name):
-        print(f"{file_name} 파일이 없습니다. 먼저 파일을 생성하세요.")
-        return
+        return jsonify({"message": f"{file_name} 파일이 없습니다. 먼저 파일을 생성하세요."}), 404
 
     # 엑셀 파일 열기
-    from openpyxl import load_workbook
     wb = load_workbook(file_name)
     ws = wb.active
-
-    print(f"파일 {file_name}을 열었습니다. 데이터 추가 중...")
 
     # 데이터 추가
     ws.append([nickname, user_id, password, high_score])
 
     # 파일 저장
     wb.save(file_name)
-    print(f"사용자 정보 [{nickname}, {user_id}, {high_score}]가 추가되었습니다.")
+    return jsonify({
+        "message": "사용자 정보가 추가되었습니다.",
+        "user": {
+            "nickname": nickname,
+            "user_id": user_id,
+            "high_score": high_score
+        }
+    }), 200
 
-# 디버깅용 테스트 코드
-file_name = "user_data.xlsx"
-
-try:
-    # 엑셀 파일 생성
-    create_excel_file(file_name)
-
-    # 사용자 정보 추가
-    add_user_to_excel(file_name, "닉네임1", "user1", "password123", 5000)
-    add_user_to_excel(file_name, "닉네임2", "user2", "mypassword", 8500)
-    add_user_to_excel(file_name, "닉네임3", "user3", "securepass", 10000)
-
-except UnicodeDecodeError as e:
-    print(f"UnicodeDecodeError 발생: {e}")
-except Exception as e:
-    print(f"알 수 없는 에러 발생: {e}")
+# 메인 함수
+if __name__ == '__main__':
+    app.run(debug=True)
