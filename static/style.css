@@ -1,0 +1,119 @@
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f9f6f2;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  text-align: center;
+}
+
+.container {
+  background: #fff;
+  padding: 30px 40px;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 90%;
+}
+
+h1 {
+  color: #333;
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+
+p {
+  color: #666;
+  margin-bottom: 20px;
+  font-size: 1.2em;
+}
+
+button {
+  background-color: #008a32;
+  color: #fff;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 8px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #008a32;
+}
+
+.word-list {
+  text-align: left;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  margin: 20px 0;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+input[type="text"] {
+  padding: 10px;
+  font-size: 1em;
+  width: 80%;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.title-image {
+  max-width: 90%;  /* 이미지가 화면 너비의 90%를 넘지 않도록 제한 */
+  height: auto;    /* 이미지의 비율을 유지하며 높이를 자동으로 조정 */
+  margin: 0 auto;  /* 가운데 정렬 */
+  display: block;  /* 블록 요소로 변환하여 margin 적용 */
+}
+
+.game-over-image {
+  max-width: 80%;  /* 이미지가 화면 너비의 80%를 넘지 않도록 제한 */
+  height: auto;    /* 이미지 비율 유지 */
+  margin: 0 auto;  /* 가운데 정렬 */
+  display: block;  /* 블록 요소로 변환 */
+}
+
+.login-form, .signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+input[type="text"], input[type="password"] {
+  padding: 10px;
+  font-size: 1em;
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.signup-link {
+  font-size: 0.9em;
+  color: #008a32;
+  text-decoration: none;
+}
+
+.signup-link:hover {
+  text-decoration: underline;
+}
+
+.flash-messages {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+  color: rgb(95, 95, 95);
+  font-size: 1em;
+  font-weight: bold;
+  text-align: center;
+}
+
+.flash-messages li {
+  margin-bottom: 5px; /* 메시지 간 간격 추가 */
+}
+
+
