@@ -4,26 +4,26 @@ import os
 
 app = Flask(__name__)
 
-# ¿¢¼¿ ÆÄÀÏ »ı¼º API
+# ì—‘ì…€ íŒŒì¼ ìƒì„± API
 @app.route('/create_excel', methods=['POST'])
 def create_excel_file():
     file_name = request.json.get('file_name', 'user_data.xlsx')
 
     if os.path.exists(file_name):
-        return jsonify({"message": f"{file_name} ÆÄÀÏÀÌ ÀÌ¹Ì Á¸ÀçÇÕ´Ï´Ù."}), 400
+        return jsonify({"message": f"{file_name} íŒŒì¼ì´ ì´ë¯¸ ì¡´ì¬í•©ë‹ˆë‹¤."}), 400
 
-    # »õ·Î¿î ¿¢¼¿ ¿öÅ©ºÏ »ı¼º
+    # ìƒˆë¡œìš´ ì—‘ì…€ ì›Œí¬ë¶ ìƒì„±
     wb = Workbook()
     ws = wb.active
 
-    # Çì´õ Ãß°¡
-    ws.append(["´Ğ³×ÀÓ", "¾ÆÀÌµğ", "ºñ¹Ğ¹øÈ£", "ÃÖ°í ±â·Ï"])
+    # í—¤ë” ì¶”ê°€
+    ws.append(["ë‹‰ë„¤ì„", "ì•„ì´ë””", "ë¹„ë°€ë²ˆí˜¸", "ìµœê³  ê¸°ë¡"])
 
-    # ÆÄÀÏ ÀúÀå
+    # íŒŒì¼ ì €ì¥
     wb.save(file_name)
-    return jsonify({"message": f"{file_name} ÆÄÀÏÀ» »ı¼ºÇß½À´Ï´Ù."}), 201
+    return jsonify({"message": f"{file_name} íŒŒì¼ì„ ìƒì„±í–ˆìŠµë‹ˆë‹¤."}), 201
 
-# »ç¿ëÀÚ Á¤º¸ Ãß°¡ API
+# ì‚¬ìš©ì ì •ë³´ ì¶”ê°€ API
 @app.route('/add_user', methods=['POST'])
 def add_user_to_excel():
     data = request.json
@@ -34,19 +34,19 @@ def add_user_to_excel():
     high_score = data.get('high_score')
 
     if not os.path.exists(file_name):
-        return jsonify({"message": f"{file_name} ÆÄÀÏÀÌ ¾ø½À´Ï´Ù. ¸ÕÀú ÆÄÀÏÀ» »ı¼ºÇÏ¼¼¿ä."}), 404
+        return jsonify({"message": f"{file_name} íŒŒì¼ì´ ì—†ìŠµë‹ˆë‹¤. ë¨¼ì € íŒŒì¼ì„ ìƒì„±í•˜ì„¸ìš”."}), 404
 
-    # ¿¢¼¿ ÆÄÀÏ ¿­±â
+    # ì—‘ì…€ íŒŒì¼ ì—´ê¸°
     wb = load_workbook(file_name)
     ws = wb.active
 
-    # µ¥ÀÌÅÍ Ãß°¡
+    # ë°ì´í„° ì¶”ê°€
     ws.append([nickname, user_id, password, high_score])
 
-    # ÆÄÀÏ ÀúÀå
+    # íŒŒì¼ ì €ì¥
     wb.save(file_name)
     return jsonify({
-        "message": "»ç¿ëÀÚ Á¤º¸°¡ Ãß°¡µÇ¾ú½À´Ï´Ù.",
+        "message": "ì‚¬ìš©ì ì •ë³´ê°€ ì¶”ê°€ë˜ì—ˆìŠµë‹ˆë‹¤.",
         "user": {
             "nickname": nickname,
             "user_id": user_id,
@@ -54,6 +54,6 @@ def add_user_to_excel():
         }
     }), 200
 
-# ¸ŞÀÎ ÇÔ¼ö
+# ë©”ì¸ í•¨ìˆ˜
 if __name__ == '__main__':
     app.run(debug=True)
