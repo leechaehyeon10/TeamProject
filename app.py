@@ -360,4 +360,4 @@ def handle_update_request():
 
 if __name__ == "__main__":
     init_excel()  # 엑셀 초기화
-    socketio.run(app, debug=True)
+    socketio.run(app, host='0.0.0.0', debug=True)
