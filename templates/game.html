@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>끝말잇기 게임</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+  <!-- Socket.IO 라이브러리 로드 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js"></script>
+  <script>
+    let socket;
+    let timerInterval;
+    // 서버에서 넘겨준 timer 변수를 정수로 변환하여 사용
+    let currentTimer = {{ timer|int }};
+
+    // 타이머 시작 함수
+    // seconds초로 설정하고 1초마다 감소
+    function startTimer(seconds) {
+      clearInterval(timerInterval);
+      currentTimer = seconds;
+      updateTimerDisplay(currentTimer);
+      timerInterval = setInterval(() => {
+        currentTimer--;
+        updateTimerDisplay(currentTimer);
+        if (currentTimer <= 0) {
+          clearInterval(timerInterval);
+          // 타이머가 0초가 되면 서버에 time_up 이벤트 전송
+          socket.emit('time_up');
+        }
+      }, 1000);
+    }
+
+    // 타이머 화면 표시 함수
+    function updateTimerDisplay(time) {
+      const timerDisplay = document.getElementById('timerDisplay');
+      timerDisplay.textContent = `타이머: ${time}초`;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // 소켓 연결
+      socket = io();
+
+      // DOM 요소 참조
+      const wordForm = document.getElementById('wordForm');
+      const wordInput = document.getElementById('wordInput');
+      const scoreDisplay = document.getElementById('scoreDisplay');
+      const wordListElement = document.getElementById('wordList');
+
+      // 페이지 로드 시 서버에서 전달한 timer 값으로 타이머 시작
+      startTimer({{ timer|int }});
+
+      // 단어 제출 폼 전송 시 소켓 이벤트 발생
+      wordForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const word = wordInput.value.trim();
+        if (word) {
+          // 서버에 word_submitted 이벤트 전송
+          socket.emit('word_submitted', { word: word });
+          wordInput.value = '';
+        }
+      });
+
+      // 점수 업데이트 이벤트 수신
+      socket.on('score_update', (data) => {
+        scoreDisplay.textContent = `점수: ${data.score}점`;
+      });
+
+      // 사용 단어 목록 업데이트 이벤트 수신
+      socket.on('word_list_update', (data) => {
+        wordListElement.innerHTML = '';
+        data.used_words.forEach(word => {
+          const p = document.createElement('p');
+          p.textContent = word;
+          wordListElement.appendChild(p);
+        });
+      });
+
+      // 타이머 업데이트 이벤트 수신: 타이머를 다시 5초로 초기화
+      socket.on('timer_update', (data) => {
+        startTimer(data.timer);
+      });
+
+      // 게임 종료 이벤트 수신: 종료 메시지 표시 후 game_over 페이지로 이동
+      socket.on('game_over', (data) => {
+        alert(data.message);
+        window.location.href = '/game_over';
+      });
+    });
+  </script>
+</head>
+<body>
+  <div class="container">
+    <p id="timerDisplay">타이머: {{ timer|int }}초</p>
+    <p id="scoreDisplay">점수: {{ score }}점</p>
+    <p id="previousWordDisplay">이전 단어: {{ previous_word }}</p>
+    <div id="wordList" class="word-list">
+      <!-- 사용한 단어 목록 표시 -->
+      {% for w in used_words %}
+      <p>{{ w }}</p>
+      {% endfor %}
+    </div>
+    <!-- 단어 제출 폼 -->
+    <form id="wordForm">
+      <input type="text" id="wordInput" name="input_word" placeholder="단어를 입력하세요" required>
+      <button type="submit">제출</button>
+    </form>
+    <button onclick="location.href='/game_over'">그만하기</button>
+  </div>
+</body>
+</html>
