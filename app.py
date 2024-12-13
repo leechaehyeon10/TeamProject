@@ -3,8 +3,9 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 from flask_socketio import SocketIO, emit
 import os
 import pandas as pd
-from openpyxl import Workbook
+from openpyxl import Workbook, load_workbook
 import random
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = "secret_key"
@@ -136,6 +137,44 @@ def game_logic(previous_word, input_word, used_words):
         return False, "단어가 이미 사용되었습니다."
 
     return True, ""
+#------------------------------
+
+#서버 백업 함수
+def backup_data_to_excel():
+    # 현재 시간을 가져와서 timestamp로 백업 파일에 포함
+    current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')  # 서버 시간 포맷
+    backup_file = 'backup_log.xlsx'  # 파일 이름 고정
+
+    # 게임 상태 백업 (game_states에서 모든 유저의 게임 상태를 기록)
+    game_states_backup = []
+    for user_id, state in game_states.items():
+        game_states_backup.append({
+            'user_id': user_id,
+            'score': state['score'],
+            'used_words': ', '.join(state['used_words']),  # 사용한 단어 목록
+            'previous_word': state['previous_word'],
+            'timestamp': current_time  # 서버 시간
+        })
+
+    game_states_df = pd.DataFrame(game_states_backup)
+
+    # 백업 워크북 생성
+    if os.path.exists(backup_file):
+        # 파일이 존재하면 기존 워크북을 불러옵니다.
+        wb = load_workbook(backup_file)
+    else:
+        # 파일이 없으면 새로운 워크북을 만듭니다.
+        wb = Workbook()
+
+    # 게임 상태 시트 생성
+    ws_game_states = wb.create_sheet(title="GameStates")
+    for _, row in game_states_df.iterrows():
+        ws_game_states.append(row.tolist())  # 행을 리스트로 변환하여 append
+
+    # 백업 파일 저장
+    wb.save(backup_file)
+
+    print(f"백업이 완료되었습니다. 백업 파일: {backup_file}")
 
 # 사용자별 게임 상태 저장용 딕셔너리
 # key: user_id, value: {score, timer, used_words, initial_word, previous_word}
@@ -267,6 +306,8 @@ def game_over():
     # 랭킹 업데이트 이벤트 전송
     rankings = get_top_rankings()
     socketio.emit("update_rankings", rankings)
+
+    backup_data_to_excel()
 
     # 게임 상태 제거
     if user_id in game_states:
