@@ -1,0 +1,150 @@
+/* 기본 설정 */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f9f6f2;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  text-align: center;
+}
+
+.container {
+  background: #fff;
+  padding: 30px 40px;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 90%;
+}
+
+/* 제목 스타일 */
+h1 {
+  color: #333;
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+
+/* 일반 텍스트 */
+p {
+  color: #666;
+  margin-bottom: 20px;
+  font-size: 1.2em;
+}
+
+/* 버튼 스타일 */
+button {
+  background-color: #008a32;
+  color: white;
+  font-size: 1em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  text-align: center;
+}
+
+button:hover {
+  background-color: #006d28;
+}
+
+/* 단어 리스트 스타일 */
+.word-list {
+  text-align: left;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  margin: 20px 0;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+/* 입력 필드 스타일 */
+input[type="text"], input[type="password"], button {
+  width: 80%; /* 입력 필드와 버튼의 너비 */
+  padding: 10px; /* 내부 여백 */
+  margin-bottom: 10px; /* 아래쪽 간격 */
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1em;
+  box-sizing: border-box;
+}
+
+/* 회원가입 링크 */
+.signup-link {
+  font-size: 0.9em;
+  color: #008a32;
+  text-decoration: none;
+}
+
+.signup-link:hover {
+  text-decoration: underline;
+}
+
+/* 플래시 메시지 스타일 */
+.flash-messages {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+  color: rgb(95, 95, 95);
+  font-size: 1em;
+  font-weight: bold;
+  text-align: center;
+}
+
+.flash-messages li {
+  margin-bottom: 5px; /* 메시지 간 간격 추가 */
+}
+
+/* 타이머와 점수 표시 */
+#timerDisplay, #scoreDisplay, #previousWordDisplay {
+  font-size: 1.2em;
+  margin-bottom: 10px;
+  color: #444;
+  text-align: center;
+}
+
+/* 입력 폼 레이아웃 */
+form {
+  display: flex;
+  flex-direction: column; /* 세로 방향으로 정렬 */
+  align-items: center; /* 가운데 정렬 */
+  gap: 10px; /* 요소 간 간격 */
+}
+
+.title-image {
+  max-width: 70%;  /* 이미지가 화면 너비의 70%를 넘지 않도록 제한 */
+  height: auto;    /* 이미지의 비율을 유지하며 높이를 자동으로 조정 */
+  margin: 0 auto;  /* 가운데 정렬 */
+  display: block;  /* 블록 요소로 변환하여 margin 적용 */
+}
+
+.game-over-image {
+  max-width: 70%;  /* 이미지가 화면 너비의 70%를 넘지 않도록 제한 */
+  height: auto;    /* 이미지의 비율을 유지하며 높이를 자동으로 조정 */
+  margin: 20px auto;  /* 위아래에 여백 추가, 중앙 정렬 */
+  display: block;  /* 블록 요소로 변환하여 margin 적용 */
+}
+
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  #timerDisplay, #scoreDisplay, #previousWordDisplay {
+    font-size: 1em;
+  }
+
+  input[type="text"], input[type="password"] {
+    font-size: 0.9em;
+    padding: 8px;
+  }
+
+  button {
+    font-size: 0.9em;
+    padding: 8px 15px;
+  }
+
+  form {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
