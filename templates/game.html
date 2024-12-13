@@ -46,6 +46,7 @@
       const wordInput = document.getElementById('wordInput');
       const scoreDisplay = document.getElementById('scoreDisplay');
       const wordListElement = document.getElementById('wordList');
+      const previousWordDisplay = document.getElementById('previousWordDisplay'); 
 
       // 페이지 로드 시 서버에서 전달한 timer 값으로 타이머 시작
       startTimer({{ timer|int }});
@@ -79,6 +80,11 @@
       // 타이머 업데이트 이벤트 수신: 타이머를 다시 5초로 초기화
       socket.on('timer_update', (data) => {
         startTimer(data.timer);
+      });
+
+      // 이전 단어 업데이트 이벤트 수신
+      socket.on('previous_word_update', (data) => {
+          previousWordDisplay.textContent = `이전 단어: ${data.previous_word}`;
       });
 
       // 게임 종료 이벤트 수신: 종료 메시지 표시 후 game_over 페이지로 이동

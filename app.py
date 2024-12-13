@@ -72,44 +72,21 @@ def get_top_rankings():
     users["Score"] = pd.to_numeric(users["Score"], errors="coerce").fillna(0)
     return users.sort_values(by="Score", ascending=False).head(3).to_dict("records")
 
-# 두음법칙을 우선적으로 처리하기 위한 초성 추출 함수
-def get_chosung(char):
-    chosung_list = ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ']
-    if char in chosung_list:
-        return char
-    return None
 
-# 두음법칙을 체크하는 함수 (초성만 비교)
-def allow_dueum_rule(previous_last_letter, input_first_letter):
-    previous_chosung = get_chosung(previous_last_letter)
-    input_chosung = get_chosung(input_first_letter)
-    
-    dueum_rules = {
-        'ㄴ': ['ㄹ', 'ㅇ'],  # '로', '옹' → '노'
-        'ㄹ': ['ㄴ', 'ㅇ'],  # '노', '옹' → '로'
-    }
+# -----게임 로직 함수들-----
 
-    if input_chosung in dueum_rules.get(previous_chosung, []):
-        return True
-    return False
-
-# 첫 글자-마지막 글자 체크 함수
+# 1. 입력한 단어의 첫 글자가 주어진 단어의 마지막 글자와 같은지 검사
 def check_first_last_letter(previous_word, input_word):
     previous_last_letter = previous_word[-1]  # 이전 단어의 마지막 글자
     input_first_letter = input_word[0]       # 현재 입력 단어의 첫 글자
-
-    # 두음법칙을 우선 적용
-    if allow_dueum_rule(previous_last_letter, input_first_letter):
-        return True  # 두음법칙을 우선 적용
-
-    # 두음법칙이 적용되지 않으면 첫 글자와 마지막 글자가 일치하는지 검사
+    
     if previous_last_letter == input_first_letter:
         return True
     else:
-        print(f"첫 글자가 '{previous_last_letter}'와 일치하지 않으며 두음법칙도 적용되지 않습니다. 게임이 종료됩니다.")
+        print(f"첫 글자가 '{previous_last_letter}'와 일치하지 않습니다. 게임이 종료됩니다.")
         return False
 
-# 단어 목록에 있는지 확인
+# 2. 단어 목록에 있는지 확인
 def check_word_in_file(input_word):
     if not os.path.exists(NOUNS_FILE):
         print("단어 목록 파일이 존재하지 않습니다.")
@@ -121,21 +98,21 @@ def check_word_in_file(input_word):
     print(f"'{input_word}'는 유효한 단어 목록에 없습니다. 게임 종료.")
     return False
 
-# 이미 사용한 단어인지 확인
+# 3. 이미 사용한 단어인지 확인
 def check_word_used(used_words, input_word):
     if input_word in used_words:
         print(f"'{input_word}'는 이미 사용한 단어입니다. 게임 종료.")
         return False
     return True
 
-# 단어 길이 체크 (1글자 불가)
+# 4. 단어 길이 체크 (1글자 불가)
 def check_word_length(input_word):
     if len(input_word) == 1:
         print("한 글자는 입력할 수 없습니다. 게임 종료.")
         return False
     return True
 
-# 점수 계산 로직 (글자 수 * 3, 4글자 이상 +3점)
+# 5. 점수 계산 로직 (글자 수 * 3, 4글자 이상 +3점)
 def calculate_score(input_word):
     word_length = len(input_word)
     score = word_length * 3
@@ -343,6 +320,7 @@ def handle_word_submitted(data):
     emit('score_update', {'score': score})
     emit('word_list_update', {'used_words': used_words})
     emit('timer_update', {'timer': 5})
+    emit('previous_word_update', {'previous_word': input_word})
 
 @socketio.on('time_up')
 def handle_time_up():
@@ -358,6 +336,6 @@ def handle_update_request():
     rankings = get_top_rankings()
     emit("update_rankings", rankings, broadcast=True)
 
-if __name__ == "__main__":
-    init_excel()  # 엑셀 초기화
+if __name__ == '__main__':
+    init_excel()
     socketio.run(app, host='0.0.0.0', debug=True)
