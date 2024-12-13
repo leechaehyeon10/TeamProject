@@ -35,27 +35,7 @@ flask_project/
 
 ---
 
-## 설치 및 실행 방법
-
-### 1. 의존성 설치
-* **필요한 Python 패키지를 설치함:**
-```bash
-pip install flask flask-login flask-socketio pandas openpyxl
-```
-
-### 2. 프로젝트 실행
-* **Flask 애플리케이션 실행:**
-```bash
-python app.py
-```
-
-### 3. 웹 브라우저에서 접속
-* **로컬 환경에서 접속:**
-```
-http://127.0.0.1:5000
-```
-
-### 4. GCP 배포 링크
+### GCP 배포 링크
 * **배포된 링크로 바로 접속 가능:**
 ```
 [끝말잇기 게임 GCP 링크](https://your-gcp-deployment-link.com)
